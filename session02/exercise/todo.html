@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TODO App</title>
-  </head>
-  <body>
-    <!-- ============================================
+ 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TODO App</title>
+</head>
+ 
+<body>
+  <!-- ============================================
        TODOアプリの HTML を作ろう
-
+ 
        以下の構造を完成させてください:
        1. ヘッダー: アプリのタイトル（h1）
        2. メイン: 入力フォーム + TODOリスト
        3. フッター: 著作権表示
-
+ 
        各TODO項目の構造:
        <li>
          <label>
@@ -23,29 +25,60 @@
          <button>削除</button>
        </li>
   ============================================ -->
-
-    <!-- ===== ヘッダー ===== -->
-    <header>
-      <!-- ヒント: h1タグでアプリのタイトルを書こう -->
-    </header>
-
-    <!-- ===== メインコンテンツ ===== -->
-    <main>
-      <!-- ----- TODO入力エリア ----- -->
-      <!-- ヒント: form (id="todo-form") タグの中に以下を追加
+ 
+  <!-- ===== ヘッダー ===== -->
+  <header>
+    <!-- ヒント: h1タグでアプリのタイトルを書こう -->
+    <h1>TODO App</h1>
+  </header>
+ 
+  <!-- ===== メインコンテンツ ===== -->
+  <main>
+    <!-- ----- TODO入力エリア ----- -->
+    <!-- ヒント: form (id="todo-form") タグの中に以下を追加
          - input (type="text", id="todo-input", placeholder="新しいTODOを入力...")
          - button (type="submit", テキスト: "追加")
     -->
-
-      <!-- ----- TODOリスト表示エリア ----- -->
-      <!-- ヒント: ul (id="todo-list") の中に li を3つ以上追加
+    <form id="todo-form">
+      <input type="text" id="todo-input" placeholder="新しいTODOを⼊⼒">
+      <button type="submit">追加</button>
+    </form>
+ 
+    <!-- ----- TODOリスト表示エリア ----- -->
+    <!-- ヒント: ul (id="todo-list") の中に li を3つ以上追加
          各liには label でcheckboxとspanを包み、後ろに削除ボタンを置く
          1つは checked をつけて完了済みにしてみよう
-    --></main>
-
-    <!-- ===== フッター ===== -->
-    <footer>
-      <!-- ヒント: <p>&copy; 2026 TODO App</p> -->
-    </footer>
-  </body>
+    -->
+    <ul id="todo-list">
+      <li>
+        <label>
+          <input type="checkbpx">
+          <span>買い物に行く</span>
+        </label>
+        <button>削除</button>
+      </li>
+      <li>
+        <label>
+          <input type="checkbpx">
+          <span>ご飯食べる</span>
+        </label>
+        <button>削除</button>
+      </li>
+      <li>
+        <label>
+          <input type="checkbpx">
+          <span>寝る</span>
+        </label>
+        <button>削除</button>
+      </li>
+    </ul>
+ 
+  </main>
+ 
+  <!-- ===== フッター ===== -->
+  <footer>
+    <!-- ヒント: <p>&copy; 2026 TODO App</p> -->
+  </footer>
+</body>
+ 
 </html>
