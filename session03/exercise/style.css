@@ -5,16 +5,27 @@
    todo.html の <link> タグのコメントを外して
    このファイルを読み込んでからスタイルを書いていこう
    =========================================== */
+h1{
+   color:rgb(255, 47, 168);
+  }
+p{
+  font-size: 50px;
+}
 
 /* --- 1. リセットと基本設定 ---
    ヒント: * で全要素の margin/padding を 0 に
           box-sizing: border-box でサイズ計算を楽に */
 
-* {
+* {margin: 0;
+padding: 0;
+box-sizing: border-box;
   /* ヒント: margin: 0; padding: 0; box-sizing: border-box; */
 }
 
-body {
+body {font-family: "Helvetica Neue", Arial, "Hiragino Sans",
+"Noto Sans JP", sans-serif;
+background-color: #f3f4f6;
+color: #333;
   /* ヒント: font-family, background-color: #f3f4f6, color: #333 */
 }
 
@@ -35,6 +46,11 @@ body {
            padding: 32px, border-radius: 12px, box-shadow */
 
 .todo-card {
+background-color: white;
+max-width: 600px;
+margin: 40px auto;       
+padding: 32px;
+border-radius: 12px;     
 }
 
 /* --- 5. 入力エリア ---
@@ -44,6 +60,21 @@ body {
 }
 
 .todo-input {
+flex: 1;                  
+padding: 12px 16px;
+border: 2px solid #d1d5db;
+border-radius: 8px;
+font-size: 16px;
+}
+
+/* 
+残りの
+幅を使い切る
+ */
+/* 
+ポインターに
+変える
+ *
   /* ヒント: flex: 1, padding: 12px 16px, border: 2px solid #d1d5db
              border-radius: 8px, font-size: 16px */
 }
@@ -53,11 +84,20 @@ body {
 }
 
 .todo-button {
+padding: 12px 24px;
+background-color: #2563eb;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;          
+}
   /* ヒント: padding: 12px 24px, background-color: #2563eb
              color: white, border: none, border-radius: 8px, cursor: pointer */
-}
 
-.todo-button:hover {
+
+.todo-button:hover {background-color: #1d4ed8;  /* 
+少し 暗く
+ */
   /* ヒント: background-color: #1d4ed8 */
 }
 
@@ -68,12 +108,30 @@ body {
 }
 
 .todo-item {
+   color:rgb(234, 36, 158);
+  font-size:50px;
+  background-color:rgba(47, 186, 255, 0.232);
+  text-align: center;
+  .box-demo {
+width: 200px;
+padding: 20px;
+border: 3px solid blue;
+margin: 30px;
+background-color: lightyellow;
+}
+color: rgba(239, 24, 153, 0.992);
+    font-size: smaller;
+    background-color: rgba(63, 227, 241, 0.244);
+    width: 200px
   /* ヒント: display: flex, align-items: center, justify-content: space-between
              padding: 12px 16px, margin-bottom: 8px
              background-color: #f9fafb, border: 1px solid #e5e7eb, border-radius: 8px */
 }
 
-.todo-item:hover {
+.todo-item:hover {background-color: #f9fafb;  /* 
+薄く ⾊が 変わる
+ 
+*/
   /* ヒント: background-color: #eff6ff */
 }
 
