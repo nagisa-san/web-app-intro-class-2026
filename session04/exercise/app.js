@@ -4,20 +4,20 @@
 //
 // TODO コメントを参考に、各関数を実装してください。
 // ============================================================
-
+ 
 // ------------------------------------------------------------
 // TODOデータを管理する配列
 // 各要素は { title: "文字列", done: true/false } の形式
 // ------------------------------------------------------------
 let todos = [];
-
+ 
 // ------------------------------------------------------------
 // DOM要素の取得
 // ------------------------------------------------------------
 const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
 const todoList = document.getElementById("todo-list");
-
+ 
 // ============================================================
 // addTodo: 新しいTODOを配列に追加する
 //
@@ -31,8 +31,11 @@ function addTodo(title) {
   //   if (title === "") return;
   //   todos.push({ title: title, done: false });
   //   render();
+  if (title === "") return;
+  todos.push({ title: title, done: false });
+  render();
 }
-
+ 
 // ============================================================
 // toggleTodo: TODOの完了状態を切り替える
 //
@@ -44,8 +47,10 @@ function toggleTodo(index) {
   // ヒント:
   //   todos[index].done = !todos[index].done;
   //   render();
+  todos[index].done = !todos[index].done;
+  render();
 }
-
+ 
 // ============================================================
 // deleteTodo: TODOを削除する
 //
@@ -57,8 +62,10 @@ function deleteTodo(index) {
   // ヒント:
   //   todos.splice(index, 1);
   //   render();
+  todos.splice(index, 1);
+  render()
 }
-
+ 
 // ============================================================
 // render: TODOリストを画面に描画する
 //
@@ -108,8 +115,36 @@ function render() {
   //     li.appendChild(deleteBtn);
   //     todoList.appendChild(li);
   //   });
+  todos.forEach((todo, index) => {
+       const li = document.createElement("li");
+       li.className = "todo-item" + (todo.done ? " done" : "");
+ 
+       const label = document.createElement("label");
+       label.className = "todo-label";
+ 
+       const checkbox = document.createElement("input");
+       checkbox.type = "checkbox";
+       checkbox.className = "todo-checkbox";
+       checkbox.checked = todo.done;
+      checkbox.addEventListener("change", () => toggleTodo(index));
+ 
+       const span = document.createElement("span");
+       span.className = "todo-title";
+       span.textContent = todo.title;
+ 
+       const deleteBtn = document.createElement("button");
+       deleteBtn.className = "delete-button";
+       deleteBtn.textContent = "削除";
+       deleteBtn.addEventListener("click", () => deleteTodo(index));
+ 
+       label.appendChild(checkbox);
+       label.appendChild(span);
+       li.appendChild(label);
+      li.appendChild(deleteBtn);
+      todoList.appendChild(li);
+    });
 }
-
+ 
 // ============================================================
 // フォーム送信イベント（実装済み）
 // ============================================================
@@ -119,7 +154,7 @@ todoForm.addEventListener("submit", (event) => {
   todoInput.value = "";
   todoInput.focus();
 });
-
+ 
 // ============================================================
 // 初期表示
 // ============================================================

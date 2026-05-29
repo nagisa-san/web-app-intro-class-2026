@@ -36,6 +36,17 @@
 
     <script>
       // ↓↓↓ ここから下に、スライドのコードを書いてください ↓↓↓
+      const addItemBtn = document.getElementById("add-item-btn");
+      const itemList = document.getElementById("item-list");
+      addItemBtn.addEventListener("click", () => {
+      const newItem = document.createElement("li");
+      newItem.textContent = "新しいアイテム";
+itemList.appendChild(newItem);
+});
+2. 
+プレビューで
+3. 
+
     </script>
   </body>
 </html>
