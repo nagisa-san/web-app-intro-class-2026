@@ -1,110 +1,126 @@
 /* ============================================
    TODO App CSS - 第8回
    第7回の正解ベース + エラーメッセージスタイル追加
+
+   CSSは「どの部分を(セレクタ)・どう見せるか(プロパティ)」を指定するもの。
+   .header のように . で始まるのはHTMLの class="..." を狙う書き方。
    ============================================ */
 
+/* 全要素(*)の初期設定をそろえる（リセット）。
+   ブラウザが勝手につける余白を消し、サイズ計算を分かりやすくする */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  margin: 0; /* 外側の余白をゼロに */
+  padding: 0; /* 内側の余白をゼロに */
+  box-sizing: border-box; /* 枠線や内側余白も含めて幅・高さを計算する */
 }
 
+/* ページ全体の基本スタイル */
 body {
+  /* 文字フォント。先頭から順に、使えるものが採用される（日本語フォントも指定） */
   font-family:
     "Helvetica Neue", Arial, "Hiragino Sans", "Noto Sans JP", sans-serif;
-  background-color: #f3f4f6;
-  color: #333;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background-color: #f3f4f6; /* 背景色（薄いグレー）。#から始まるのは色コード */
+  color: #333; /* 文字色（濃いグレー） */
+  min-height: 100vh; /* 画面の高さいっぱいまで広げる（100vh=画面の高さ100%） */
+  display: flex; /* 中身をflexboxで並べる */
+  flex-direction: column; /* 縦方向（上から下）に並べる → ヘッダー/本文/フッター */
 }
 
 /* --- ヘッダー --- */
 .header {
-  background-color: #2563eb;
-  color: white;
-  padding: 16px 24px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #2563eb; /* 青色の背景 */
+  color: white; /* 白い文字 */
+  padding: 16px 24px; /* 内側の余白（上下16px / 左右24px） */
+  text-align: center; /* 文字を中央ぞろえに */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 下にうっすら影をつける */
 }
 
 .header h1 {
-  font-size: 24px;
-  font-weight: bold;
+  /* .header の中にある <h1> という意味（スペースで「〜の中の」を表す） */
+  font-size: 24px; /* 文字の大きさ */
+  font-weight: bold; /* 太字 */
 }
 
 /* --- TODOカード --- */
+/* TODO一覧をのせる白いカード部分 */
 .todo-card {
   background-color: white;
-  max-width: 600px;
-  width: 100%;
-  margin: 24px auto;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  flex: 1;
+  max-width: 600px; /* これ以上は横に広がらない（読みやすさのため） */
+  width: 100%; /* 画面が狭いときは横幅いっぱいに */
+  margin: 24px auto; /* 上下24px / 左右autoで中央に寄せる */
+  padding: 32px; /* 内側の余白 */
+  border-radius: 12px; /* 角を丸くする */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 浮いて見える影 */
+  flex: 1; /* 余ったスペースを埋めて広がる（フッターを下に押しやる） */
 }
 
 /* --- エラーメッセージ（第8回で追加） --- */
+/* 普段は隠れていて、エラー時に app.js が表示する赤い帯 */
 .error-message {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: #fee2e2; /* 薄い赤の背景 */
+  color: #dc2626; /* 赤い文字 */
   padding: 12px 16px;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 16px; /* 下に余白をあけて入力欄と離す */
   font-size: 14px;
-  border: 1px solid #fecaca;
+  border: 1px solid #fecaca; /* 赤い枠線（太さ1px・実線） */
 }
 
 /* --- 入力エリア --- */
+/* 入力欄と追加ボタンを横並びにする箱 */
 .input-area {
-  display: flex;
-  gap: 8px;
+  display: flex; /* 子要素を横並びに */
+  gap: 8px; /* 子要素どうしのすき間 */
   margin-bottom: 24px;
 }
 
+/* テキスト入力欄 */
 .todo-input {
-  flex: 1;
+  flex: 1; /* 余った横幅をすべて使って広がる（ボタンの残り全部） */
   padding: 12px 16px;
-  border: 2px solid #d1d5db;
+  border: 2px solid #d1d5db; /* グレーの枠線 */
   border-radius: 8px;
   font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s;
+  outline: none; /* クリック時にブラウザが出す枠を消す（下で自前の色をつける） */
+  transition: border-color 0.3s; /* 枠線の色が0.3秒かけてなめらかに変わる */
 }
 
+/* :focus = その要素を選択中（クリックや入力中）のときだけ適用 */
 .todo-input:focus {
-  border-color: #2563eb;
+  border-color: #2563eb; /* 入力中は枠線を青くする */
 }
 
+/* 追加ボタン */
 .todo-button {
   padding: 12px 24px;
   background-color: #2563eb;
   color: white;
-  border: none;
+  border: none; /* 枠線なし */
   border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  white-space: nowrap;
+  cursor: pointer; /* マウスを乗せると指のカーソルになる */
+  transition: background-color 0.3s; /* 色の変化をなめらかに */
+  white-space: nowrap; /* ボタンの文字を途中で改行させない */
 }
 
+/* :hover = マウスを乗せたときだけ適用 */
 .todo-button:hover {
-  background-color: #1d4ed8;
+  background-color: #1d4ed8; /* 少し濃い青にして「押せる」感を出す */
 }
 
 /* --- TODOリスト --- */
 .todo-list {
-  list-style: none;
+  list-style: none; /* <li>の先頭につく「・」を消す */
 }
 
+/* TODO1件ぶんの行（app.js が1件ずつ作る） */
 .todo-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: center; /* 中身を縦方向の中央にそろえる */
+  justify-content: space-between; /* 左(チェック+文字)と右(削除ボタン)を両端に分ける */
   padding: 12px 16px;
-  margin-bottom: 8px;
+  margin-bottom: 8px; /* 行どうしのすき間 */
   background-color: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -112,53 +128,57 @@ body {
 }
 
 .todo-item:hover {
-  background-color: #eff6ff;
+  background-color: #eff6ff; /* マウスを乗せた行をうっすら青く */
 }
 
+/* チェックボックスとタイトルをまとめたラベル部分 */
 .todo-label {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex: 1;
+  gap: 12px; /* チェックボックスと文字のすき間 */
+  flex: 1; /* 残りの横幅を使って広がる */
 }
 
 .todo-checkbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #2563eb;
+  accent-color: #2563eb; /* チェックを入れたときの色を青に */
 }
 
 .todo-title {
   font-size: 16px;
-  line-height: 1.5;
-  word-break: break-word;
+  line-height: 1.5; /* 行の高さ（文字サイズの1.5倍）。読みやすくする */
+  word-break: break-word; /* 長い文字列を途中で折り返して、はみ出させない */
 }
 
 /* --- 完了状態 --- */
+/* .todo-item.done = item と done の両方のclassを持つ要素（＝完了したTODO）。
+   app.js が完了時に "done" クラスを付け外しする */
 .todo-item.done {
-  background-color: #f0fdf4;
+  background-color: #f0fdf4; /* 薄い緑の背景 */
   border-color: #bbf7d0;
 }
 
 .todo-item.done .todo-title {
-  text-decoration: line-through;
-  color: #9ca3af;
+  text-decoration: line-through; /* 文字に取り消し線を引く */
+  color: #9ca3af; /* 文字を薄いグレーにして「完了済み」を表す */
 }
 
 /* --- 削除ボタン --- */
 .delete-button {
   padding: 6px 12px;
-  background-color: transparent;
+  background-color: transparent; /* 背景は透明（普段は目立たせない） */
   color: #9ca3af;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s; /* all = すべてのプロパティの変化をなめらかに */
 }
 
 .delete-button:hover {
+  /* マウスを乗せると赤系に変わり、「削除」だと分かりやすくする */
   background-color: #fef2f2;
   color: #dc2626;
   border-color: #fca5a5;
@@ -166,7 +186,7 @@ body {
 
 /* --- ページフッター --- */
 .footer {
-  background-color: #374151;
+  background-color: #374151; /* 濃いグレーの背景 */
   color: #9ca3af;
   text-align: center;
   padding: 16px;
@@ -174,21 +194,23 @@ body {
 }
 
 /* --- レスポンシブ --- */
+/* @media (max-width: 480px) = 画面の幅が480px以下のとき（スマホなど）だけ、
+   この中のスタイルを上書きで適用する */
 @media (max-width: 480px) {
   .header h1 {
-    font-size: 20px;
+    font-size: 20px; /* 見出しを少し小さく */
   }
 
   .todo-card {
-    margin: 12px;
+    margin: 12px; /* 余白を詰めて、画面を広く使う */
     padding: 16px;
   }
 
   .input-area {
-    flex-direction: column;
+    flex-direction: column; /* 入力欄とボタンを横並び → 縦並びに変える */
   }
 
   .todo-button {
-    width: 100%;
+    width: 100%; /* ボタンを横幅いっぱいにして押しやすく */
   }
 }

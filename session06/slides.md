@@ -539,32 +539,29 @@ class TodoUpdate(BaseModel):
 
 ---
 
-## DB接続を関数化する
+## DBへの接続は各APIの中で行う
 
 ```python
 import sqlite3
 
-DATABASE = "todo.db"
-
-def get_db():
-    """データベース接続を取得する関数"""
-    conn = sqlite3.connect(DATABASE)
-    # 結果を辞書形式で取得できるようにする
-    conn.row_factory = sqlite3.Row
-    return conn
+DATABASE = "todo.db"  # データベースファイルの名前
 ```
 
-### `row_factory = sqlite3.Row` の効果
+- 各APIの中で `sqlite3.connect(DATABASE)` して接続し、処理後に `conn.close()` で閉じる
+- ヘルパー関数や特別な設定は使わず、「毎回つなぐ」シンプルな形に統一する
+
+### 取得した結果はタプルで返る
 
 ```python
-# 設定なし → タプルで返る
+# fetchall() / fetchone() で取り出した1行はタプル
 # (1, '買い物', 0)
 
-# 設定あり → 辞書のようにアクセスできる
-# row["id"], row["title"], row["done"]
+# 番号（インデックス）で取り出す
+# row[0] → id, row[1] → title, row[2] → done
 ```
 
-これにより、JSONに変換しやすくなります。
+番号の取り違えを防ぐため、`SELECT *` ではなく
+`SELECT id, title, done` のように **必要なカラムを順番どおりに指定** する。
 
 ---
 
@@ -577,21 +574,17 @@ app = FastAPI()
 
 @app.get("/todos")
 def list_todos():
-    conn = get_db()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM todos")
+    cursor.execute("SELECT id, title, done FROM todos ORDER BY id")
     rows = cursor.fetchall()
     conn.close()
 
-    # SQLite.Rowを辞書に変換してリストにする
-    todos = []
-    for row in rows:
-        todos.append({
-            "id": row["id"],
-            "title": row["title"],
-            "done": bool(row["done"])
-        })
-    return todos
+    # 1行は (id, title, done) の順のタプル。番号で取り出して辞書のリストにする
+    return [
+        {"id": row[0], "title": row[1], "done": bool(row[2])}
+        for row in rows
+    ]
 ```
 
 ---
@@ -608,10 +601,10 @@ from fastapi import FastAPI, HTTPException
 
 @app.post("/todos")
 def create_todo(todo: TodoCreate):
-    conn = get_db()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO todos (title) VALUES (?)",
+        "INSERT INTO todos (title, done) VALUES (?, 0)",
         (todo.title,)
     )
     conn.commit()
@@ -632,13 +625,13 @@ def create_todo(todo: TodoCreate):
 ### 危険な書き方（絶対にやらない！）
 ```python
 # ユーザー入力をそのまま埋め込む → 危険！
-cursor.execute(f"INSERT INTO todos (title) VALUES ('{todo.title}')")
+cursor.execute(f"INSERT INTO todos (title, done) VALUES ('{todo.title}', 0)")
 ```
 
 ### 安全な書き方（プレースホルダを使う）
 ```python
 # ? にパラメータを渡す → 安全！
-cursor.execute("INSERT INTO todos (title) VALUES (?)", (todo.title,))
+cursor.execute("INSERT INTO todos (title, done) VALUES (?, 0)", (todo.title,))
 ```
 
 - ユーザーが `'; DROP TABLE todos; --` のような入力をした場合
@@ -666,7 +659,7 @@ cursor.execute("INSERT INTO todos (title) VALUES (?)", (todo.title,))
    python main.py
    ```
 
-5. ブラウザで `http://localhost:8000/todos` を開いてデータを確認
+5. ブラウザで `/todos` を開いてデータを確認
 
 ---
 
@@ -681,11 +674,11 @@ cursor.execute("INSERT INTO todos (title) VALUES (?)", (todo.title,))
 ```python
 @app.put("/todos/{todo_id}")
 def update_todo(todo_id: int, todo: TodoUpdate):
-    conn = get_db()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # まず対象のTODOが存在するか確認
-    cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
+    cursor.execute("SELECT title FROM todos WHERE id = ?", (todo_id,))
     existing = cursor.fetchone()
     if existing is None:
         conn.close()
@@ -699,9 +692,10 @@ def update_todo(todo_id: int, todo: TodoUpdate):
     conn.commit()
     conn.close()
 
+    # existing は (title,) のタプルなので先頭を取り出す
     return {
         "id": todo_id,
-        "title": existing["title"],
+        "title": existing[0],
         "done": todo.done
     }
 ```
@@ -713,11 +707,11 @@ def update_todo(todo_id: int, todo: TodoUpdate):
 ```python
 @app.delete("/todos/{todo_id}")
 def delete_todo(todo_id: int):
-    conn = get_db()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # まず対象のTODOが存在するか確認
-    cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
+    cursor.execute("SELECT id FROM todos WHERE id = ?", (todo_id,))
     existing = cursor.fetchone()
     if existing is None:
         conn.close()

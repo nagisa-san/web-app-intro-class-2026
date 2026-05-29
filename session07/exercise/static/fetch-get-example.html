@@ -72,8 +72,8 @@
       // Fetch API を使った GET リクエストのデモ
       // =====================================================
 
-      // サーバーのURL（FastAPIが起動しているアドレス）
-      const API_URL = "http://localhost:8000";
+      // このページは FastAPI の static フォルダから配信される。
+      // 画面とAPIが同じサーバー（同一オリジン）なので、相対パス "/todos" で呼べる。
 
       // async/await を使った GET リクエスト
       async function getTodos() {
@@ -83,7 +83,7 @@
           // Step 1: fetch() でGETリクエストを送信
           //   fetch() はデフォルトでGETメソッドを使う
           console.log("Step 1: fetch() でリクエスト送信...");
-          const response = await fetch(`${API_URL}/todos`);
+          const response = await fetch("/todos");
 
           // Step 2: レスポンスのステータスを確認
           console.log("Step 2: レスポンス受信");
@@ -104,12 +104,12 @@
           const resultDiv = document.getElementById("result");
           resultDiv.textContent = JSON.stringify(data, null, 2);
         } catch (error) {
-          // エラーが発生した場合（サーバーが起動していない、CORSエラーなど）
+          // エラーが発生した場合（サーバーが起動していないなど）
           console.error("エラーが発生しました:", error);
           document.getElementById("result").textContent =
             "エラー: " +
             error.message +
-            "\n\nサーバーが起動しているか確認してください。\nCORSエラーの場合はConsoleを確認してください。";
+            "\n\nサーバーが起動しているか確認してください。";
         }
       }
     </script>

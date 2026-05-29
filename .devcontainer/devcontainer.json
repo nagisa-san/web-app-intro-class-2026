@@ -17,5 +17,15 @@
       ]
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt --break-system-packages"
+  "postCreateCommand": "pip install -r requirements.txt --break-system-packages",
+  "forwardPorts": [
+    8000
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "chat-app",
+      "visibility": "public",
+      "onAutoForward": "openBrowser"
+    }
+  }
 }

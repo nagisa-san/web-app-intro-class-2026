@@ -50,14 +50,10 @@ class TodoUpdate(BaseModel):
     done: bool
 
 
-# --- データベース接続 ---
-
-
-def get_db():
-    """データベース接続を取得する"""
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+# --- データベース接続について ---
+# このアプリでは、各APIの中で sqlite3.connect(DATABASE) して接続し、
+# 処理が終わったら conn.close() で閉じる「毎回つなぐ」スタイルに統一する。
+# （ヘルパー関数や row_factory は使わず、初学者にも追いやすいシンプルな形にしている）
 
 
 # --- API エンドポイント ---
@@ -72,18 +68,15 @@ def root():
 @app.get("/todos")
 def get_todos():
     """全てのTODOをリストで返す"""
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM todos ORDER BY id")
-    rows = cursor.fetchall()
-    conn.close()
+    conn = sqlite3.connect(DATABASE)  # DBに接続する
+    cursor = conn.cursor()  # SQLを実行する係（カーソル）
 
-    todos = []
-    for row in rows:
-        todos.append(
-            {"id": row["id"], "title": row["title"], "done": bool(row["done"])}
-        )
-    return todos
+    cursor.execute("SELECT id, title, done FROM todos ORDER BY id")
+    rows = cursor.fetchall()  # 取得した全行をリストで受け取る
+
+    conn.close()  # 接続を閉じる
+    # 1行は (id, title, done) の順のタプル。番号で取り出して辞書のリストに作り変える
+    return [{"id": row[0], "title": row[1], "done": bool(row[2])} for row in rows]
 
 
 # POST /todos - TODO新規作成
@@ -91,8 +84,10 @@ def get_todos():
 def create_todo(todo: TodoCreate):
     """タイトルを受け取り、新しいTODOを追加する"""
     # ヒント:
-    #   1. conn = get_db() で接続
-    #   2. cursor.execute("INSERT INTO todos (title) VALUES (?)", (todo.title,))
+    #   1. conn = sqlite3.connect(DATABASE) で接続し、cursor = conn.cursor()
+    #   2. cursor.execute(
+    #          "INSERT INTO todos (title, done) VALUES (?, 0)", (todo.title,)
+    #      )
     #   3. conn.commit() で確定
     #   4. new_id = cursor.lastrowid で新しいIDを取得
     #   5. conn.close() で閉じる
@@ -105,14 +100,16 @@ def create_todo(todo: TodoCreate):
 def update_todo(todo_id: int, todo: TodoUpdate):
     """指定IDのTODOの完了状態を更新する"""
     # ヒント:
-    #   1. conn = get_db() で接続
+    #   1. conn = sqlite3.connect(DATABASE) で接続し、cursor = conn.cursor()
     #   2. SELECT で対象が存在するか確認
-    #      cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
-    #      existing = cursor.fetchone()
-    #   3. 存在しなければ raise HTTPException(status_code=404, detail="TODO not found")
+    #      cursor.execute("SELECT title FROM todos WHERE id = ?", (todo_id,))
+    #      existing = cursor.fetchone()  # 無ければ None が返る
+    #   3. 存在しなければ conn.close() してから
+    #      raise HTTPException(status_code=404, detail="TODO not found")
     #   4. cursor.execute("UPDATE todos SET done = ? WHERE id = ?", (int(todo.done), todo_id))
     #   5. conn.commit(), conn.close()
-    #   6. {"id": todo_id, "title": existing["title"], "done": todo.done} を返す
+    #   6. {"id": todo_id, "title": existing[0], "done": todo.done} を返す
+    #      （existing は (title,) のタプルなので先頭を取り出す）
     pass
 
 
@@ -121,9 +118,12 @@ def update_todo(todo_id: int, todo: TodoUpdate):
 def delete_todo(todo_id: int):
     """指定IDのTODOを削除する"""
     # ヒント:
-    #   1. conn = get_db() で接続
+    #   1. conn = sqlite3.connect(DATABASE) で接続し、cursor = conn.cursor()
     #   2. SELECT で対象が存在するか確認
-    #   3. 存在しなければ raise HTTPException(status_code=404, detail="TODO not found")
+    #      cursor.execute("SELECT id FROM todos WHERE id = ?", (todo_id,))
+    #      existing = cursor.fetchone()
+    #   3. 存在しなければ conn.close() してから
+    #      raise HTTPException(status_code=404, detail="TODO not found")
     #   4. cursor.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
     #   5. conn.commit(), conn.close()
     #   6. {"message": "TODO deleted", "id": todo_id} を返す

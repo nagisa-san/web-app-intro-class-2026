@@ -497,9 +497,10 @@ $ python main.py
    ```
    python main.py
    ```
-4. ブラウザで `http://localhost:8000` にアクセス
-5. `{"message": "Hello, World!"}` が表示されることを確認
-6. 自動ドキュメント: `http://localhost:8000/docs` にもアクセスしてみよう
+4. ターミナルタブを切り替えてポートタブを開く
+5. 転送されたアドレスから「ブラウザで開く」をクリック
+6. `{"message": "TODO API is running", "docs": "/docs"}` が表示されることを確認
+7. 自動ドキュメント: `/docs` にもアクセスしてみよう
 
 ---
 
@@ -514,15 +515,15 @@ $ python main.py
 **ルーティング** = URLパスと関数の対応付け
 
 ```python
-@app.get("/")            # GET http://localhost:8000/
+@app.get("/")
 def read_root():
     return {"message": "Hello"}
 
-@app.get("/about")       # GET http://localhost:8000/about
+@app.get("/about")
 def about():
     return {"page": "About"}
 
-@app.get("/contact")     # GET http://localhost:8000/contact
+@app.get("/contact")
 def contact():
     return {"page": "Contact"}
 ```
@@ -665,7 +666,7 @@ def get_todos():
 
 FastAPIは自動で **API仕様書** を生成する
 
-`http://localhost:8000/docs` にアクセスすると:
+`/docs` にアクセスすると:
 - 全エンドポイントの一覧
 - リクエスト/レスポンスの形式
 - **その場でAPIを試せる** "Try it out" ボタン
@@ -688,9 +689,10 @@ FastAPIは自動で **API仕様書** を生成する
    def get_todos():
        return todos
    ```
-2. ブラウザで `http://localhost:8000/todos` にアクセス
-3. JSON形式でTODOリストが返ってくることを確認
-4. `http://localhost:8000/docs` でSwagger UIも確認
+4. ターミナルタブを切り替えてポートタブを開く
+5. 転送されたアドレスから「ブラウザで開く」をクリック
+6. JSON形式でTODOリストが返ってくることを確認
+7. `/docs` でSwagger UIも確認
 
 ---
 

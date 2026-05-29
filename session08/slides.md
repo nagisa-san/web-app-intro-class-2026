@@ -662,14 +662,14 @@ from fastapi import FastAPI, HTTPException
 
 @app.delete("/todos/{todo_id}")
 def delete_todo(todo_id: int):
-    conn = get_db_connection()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # まず対象のTODOが存在するか確認
-    cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
-    todo = cursor.fetchone()
+    cursor.execute("SELECT id FROM todos WHERE id = ?", (todo_id,))
+    existing = cursor.fetchone()
 
-    if todo is None:
+    if existing is None:
         conn.close()
         # 404エラーを返す
         raise HTTPException(
@@ -731,9 +731,9 @@ try {
 
 ```python
 try:
-    conn = get_db_connection()
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM todos")
+    cursor.execute("SELECT id, title, done FROM todos")
     todos = cursor.fetchall()
 except Exception as e:
     raise HTTPException(status_code=500, detail="データベースエラー")
