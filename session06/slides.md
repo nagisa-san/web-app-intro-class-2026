@@ -753,9 +753,6 @@ raise HTTPException(status_code=404, detail="TODO not found")
 ### FastAPIが自動で生成するAPIドキュメント
 
 - サーバー起動後、ブラウザで `/docs` にアクセス
-  ```
-  http://localhost:8000/docs
-  ```
 
 ### Swagger UIでできること
 - 全APIエンドポイントの一覧を確認
@@ -808,7 +805,7 @@ session06/
 
 1. `exercise/main.py` の PUT と DELETE の `# TODO` コメント部分を実装
 2. サーバーを再起動(ctrl+c → python main.py)
-3. Swagger UIで動作確認: `http://localhost:8000/docs`
+3. Swagger UIで動作確認: `/docs`
 4. 以下を試す:
    - GET /todos → 一覧取得
    - POST /todos → 新規追加
