@@ -581,8 +581,8 @@ def hello(name: str):
        return {"message": f"こんにちは、{name}さん！"}
    ```
 2. ブラウザで以下のURLにアクセスして確認:
-   - `http://localhost:8000/hello/自分の名前`
-   - `http://localhost:8000/hello/FastAPI`
+   - `/hello/自分の名前`
+   - `/hello/FastAPI`
 3. **確認ポイント:**
    - URLを変えると返ってくるデータが変わる
    - Pythonのコードがサーバー上で実行されている
