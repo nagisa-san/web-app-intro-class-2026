@@ -85,13 +85,21 @@ def create_todo(todo: TodoCreate):
     """タイトルを受け取り、新しいTODOを追加する"""
     # ヒント:
     #   1. conn = sqlite3.connect(DATABASE) で接続し、cursor = conn.cursor()
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
     #   2. cursor.execute(
     #          "INSERT INTO todos (title, done) VALUES (?, 0)", (todo.title,)
     #      )
+    cursor.execute("INSERT INTO todos (title,done) VALUES (?,0)",(todo.title,))
+
     #   3. conn.commit() で確定
+    conn.comit()
     #   4. new_id = cursor.lastrowid で新しいIDを取得
+    new_id = cursor.lastrowid
     #   5. conn.close() で閉じる
+    conn.close()
     #   6. {"id": new_id, "title": todo.title, "done": False} を返す
+    return { "id": new_id,"title":todo.title,"done":False}
     pass
 
 
