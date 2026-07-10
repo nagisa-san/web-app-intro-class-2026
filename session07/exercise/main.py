@@ -134,7 +134,7 @@ def delete_todo(todo_id: int):
 # --- TODO: 静的ファイル配信を追加してください（実習2）---
 # TODO(実習2): 静的ファイルを配信してください
 #   ヒント:
-#   app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 #
 # 注意: app.mount() はすべてのパスを受け取るので、ファイルの最後に書いてください
 

@@ -132,15 +132,15 @@ function renderTodos(todos) {
     //     li.appendChild(deleteBtn);
 
     // 危険！ innerHTML を使用（XSS脆弱性あり）
-    li.innerHTML = `
-      <label class="todo-label">
-        <input type="checkbox" class="todo-checkbox"
-          ${todo.done ? "checked" : ""}
-          onchange="toggleTodo(${todo.id}, ${todo.done})">
-        <span class="todo-title">${todo.title}</span>
-      </label>
-      <button class="delete-button" onclick="deleteTodo(${todo.id})">削除</button>
-    `;
+    //li.innerHTML = `
+      //<label class="todo-label">
+        //<input type="checkbox" class="todo-checkbox"
+          //${todo.done ? "checked" : ""}
+          //onchange="toggleTodo(${todo.id}, ${todo.done})">
+        //<span class="todo-title">${todo.title}</span>
+      //</label>
+      //<button class="delete-button" onclick="deleteTodo(${todo.id})">削除</button>
+    //`;
 
     list.appendChild(li);
   });
@@ -152,14 +152,14 @@ function renderTodos(todos) {
 
 // TODO(実習5): showError 関数を実装してください
 //   ヒント:
-//   function showError(message) {
-//     const errorDiv = document.getElementById("error-message");
-//     errorDiv.textContent = message;
-//     errorDiv.style.display = "block";
-//     setTimeout(() => {
-//       errorDiv.style.display = "none";
-//     }, 5000);
-//   }
+   function showError(message) {
+     const errorDiv = document.getElementById("error-message");
+     errorDiv.textContent = message;
+     errorDiv.style.display = "block";
+     setTimeout(() => {
+       errorDiv.style.display = "none";
+     }, 5000);
+   }
 
 // ============================================================
 // イベントリスナー

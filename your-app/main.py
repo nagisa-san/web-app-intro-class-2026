@@ -27,22 +27,18 @@ app.add_middleware(
 
 # --- データベース設定 ---
 # データを保存するファイルの名前。アプリと同じフォルダに todo.db が作られる
-DATABASE = "todo.db"
+DATABASE = "shop.db"
 
 
 def init_db():
     """データベースとテーブルを初期化する"""
-    conn = sqlite3.connect(DATABASE)  # データベースに接続する
-    cursor = conn.cursor()  # SQLを実行する係（カーソル）を用意する
-    # todos テーブルがまだ無ければ作る（IF NOT EXISTS）
-    #   id    : 自動で増える番号（主キー）
-    #   title : TODOの内容（空はNG）
-    #   done  : 完了したかどうか（0=未完了, 1=完了）
+    conn = sqlite3.connect(DATABASE)  
+    cursor = conn.cursor()  
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS todos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            done INTEGER DEFAULT 0
+        CREATE TABLE IF NOT EXISTS shops (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,                   
+        visited INTEGER DEFAULT 0             
         )
     """)
     conn.commit()  # 変更を確定して保存する
@@ -54,16 +50,16 @@ def init_db():
 # 形に合わないデータが送られてきたら、FastAPIが自動でエラーを返してくれる。
 
 
-class TodoCreate(BaseModel):
-    # 新しいTODOを作るときに受け取るデータ
+class ShopCreate(BaseModel):
+    # 新しいお店を作るときに受け取るデータ
     # title は1文字以上100文字以下の文字列でなければならない
-    title: str = Field(min_length=1, max_length=100)
+    name: str = Field(min_length=1, max_length=100)
 
 
-class TodoUpdate(BaseModel):
+class ShopUpdate(BaseModel):
     # TODOを更新するときに受け取るデータ
     # done は True / False（完了したかどうか）
-    done: bool
+    visited: bool
 
 
 # --- APIエンドポイント ---
@@ -71,27 +67,27 @@ class TodoUpdate(BaseModel):
 # 「どのURLに、どの種類のリクエストが来たら、この関数を動かすか」を決める。
 
 
-@app.get("/todos")  # GET /todos にアクセスされたら実行
-def get_todos():
-    """TODO一覧を取得する"""
+@app.get("/shops")  # GET /todos にアクセスされたら実行
+def get_shops():
+    """お店一覧を取得する"""
     conn = sqlite3.connect(DATABASE)  # 接続する
     cursor = conn.cursor()
 
     # todos テーブルの全データを id 順に取り出す
-    cursor.execute("SELECT id, title, done FROM todos ORDER BY id")
-    todos = cursor.fetchall()  # 取り出した全行をリストで受け取る
+    cursor.execute("SELECT id, name, visited FROM shops ORDER BY id")
+    shops = cursor.fetchall()  # 取り出した全行をリストで受け取る
 
     conn.close()  # 接続を閉じる
     # 1行は (id, title, done) の順のタプルなので、番号で取り出す。
     # 取り出したデータを、ブラウザに返しやすい辞書のリストに作り変える。
     return [
-        {"id": todo[0], "title": todo[1], "done": bool(todo[2])}
-        for todo in todos
+        {"id": shop[0], "name": shop[1], "visited": bool(shop[2])}
+        for shop in shops
     ]
 
 
-@app.post("/todos", status_code=201)  # POST /todos で新規作成（201=作成成功）
-def create_todo(todo: TodoCreate):
+@app.post("/shops", status_code=201)  # POST /todos で新規作成（201=作成成功）
+def create_shop(shop: ShopCreate):
     """新しいTODOを作成する"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -99,61 +95,61 @@ def create_todo(todo: TodoCreate):
     # 新しいTODOを1件追加する（done は 0=未完了で登録）
     # ? を使うことで、危険な文字列が混ざってもSQLが壊れない（SQLインジェクション対策）
     cursor.execute(
-        "INSERT INTO todos (title, done) VALUES (?, 0)",
-        (todo.title,),
+        "INSERT INTO shops (name, visited) VALUES (?, 0)",
+        (shop.name,),
     )
     conn.commit()  # 追加を確定する
-    todo_id = cursor.lastrowid  # たった今追加した行の id を取得する
+    shop_id = cursor.lastrowid  # たった今追加した行の id を取得する
 
     conn.close()
-    return {"id": todo_id, "title": todo.title, "done": False}
+    return {"id": shop_id, "name": shop.name, "visited": False}
 
 
 # PUT /todos/5 のように、URLの {todo_id} の部分が引数 todo_id に入る
-@app.put("/todos/{todo_id}")
-def update_todo(todo_id: int, todo: TodoUpdate):
+@app.put("/shops/{shop_id}")
+def update_shop(shop_id: int, shop: ShopUpdate):
     """TODOの完了状態を更新する"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # まず、その id のTODOが本当にあるか確認する
-    cursor.execute("SELECT title FROM todos WHERE id = ?", (todo_id,))
+    cursor.execute("SELECT name FROM shops WHERE id = ?", (shop_id,))
     existing = cursor.fetchone()  # 1件だけ取り出す。無ければ None が返る
     if existing is None:
         conn.close()  # 見つからないときも接続は閉じてから終わる
         # 404エラー（見つからない）を返して処理を中断する
-        raise HTTPException(status_code=404, detail="TODO not found")
+        raise HTTPException(status_code=404, detail="SHOP not found")
 
     # done（完了状態）を更新する。True/False は int() で 1/0 に変換して保存
     cursor.execute(
-        "UPDATE todos SET done = ? WHERE id = ?",
-        (int(todo.done), todo_id),
+        "UPDATE shops SET visited = ? WHERE id = ?",
+        (int(shop.visited), shop_id),
     )
     conn.commit()  # 更新を確定する
 
     conn.close()
     # existing は (title,) のタプルなので、先頭を取り出す
-    return {"id": todo_id, "title": existing[0], "done": todo.done}
+    return {"id": shop_id, "name": existing[0], "visited": shop.visited}
 
 
-@app.delete("/todos/{todo_id}")  # DELETE /todos/5 で id=5 のTODOを削除
-def delete_todo(todo_id: int):
-    """TODOを削除する"""
+@app.delete("/shops/{shop_id}")  # DELETE /todos/5 で id=5 のTODOを削除
+def delete_shop(shop_id: int):
+    """SHOPを削除する"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # 削除する前に、その id のTODOが存在するか確認する
-    cursor.execute("SELECT id FROM todos WHERE id = ?", (todo_id,))
+    cursor.execute("SELECT id FROM shops WHERE id = ?", (shop_id,))
     existing = cursor.fetchone()
     if existing is None:
         conn.close()
-        raise HTTPException(status_code=404, detail="TODO not found")
+        raise HTTPException(status_code=404, detail="SHOP not found")
 
-    cursor.execute("DELETE FROM todos WHERE id = ?", (todo_id,))  # 削除する
+    cursor.execute("DELETE FROM shops WHERE id = ?", (shop_id,))  # 削除する
     conn.commit()  # 削除を確定する
 
     conn.close()
-    return {"message": "TODO deleted", "id": todo_id}
+    return {"message": "SHOP deleted", "id": shop_id}
 
 
 # --- 静的ファイル配信 ---

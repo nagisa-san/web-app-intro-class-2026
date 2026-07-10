@@ -52,10 +52,10 @@ def init_db():
 
 
 # TODO(実習5): TodoCreate にバリデーションを追加してください
-#   ヒント: from pydantic import Field を追加して
-#           title: str = Field(min_length=1, max_length=100) に書き換える
+from pydantic import Field 
+ 
 class TodoCreate(BaseModel):
-    title: str  # ← ここにバリデーションを追加
+    title: str = Field(min_length=1, max_length=100)
 
 
 class TodoUpdate(BaseModel):
@@ -91,10 +91,7 @@ def create_todo(todo: TodoCreate):
     # TODO(実習4): パラメータバインディングに修正してください
     #   修正前（危険）: f-string でユーザー入力を直接SQL文に埋め込んでいる
     #   修正後（安全）:
-    #     cursor.execute(
-    #         "INSERT INTO todos (title, done) VALUES (?, 0)",
-    #         (todo.title,)
-    #     )
+    cursor.execute("INSERT INTO todos (title, done) VALUES (?, 0)", (todo.title,))
     cursor.execute(f"INSERT INTO todos (title, done) VALUES ('{todo.title}', 0)")
     conn.commit()
     todo_id = cursor.lastrowid
