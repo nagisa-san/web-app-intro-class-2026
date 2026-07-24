@@ -28,7 +28,7 @@ body {
 
 /* --- ヘッダー --- */
 .header {
-  background-color: #2563eb; /* 青色の背景 */
+  background-color: #ebc725; /* 青色の背景 */
   color: white; /* 白い文字 */
   padding: 16px 24px; /* 内側の余白（上下16px / 左右24px） */
   text-align: center; /* 文字を中央ぞろえに */
@@ -93,10 +93,10 @@ body {
 /* 追加ボタン */
 .todo-button {
   padding: 12px 24px;
-  background-color: #2563eb;
+  background-color: #ebc725;
   color: white;
   border: none; /* 枠線なし */
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer; /* マウスを乗せると指のカーソルになる */
@@ -186,8 +186,8 @@ body {
 
 /* --- ページフッター --- */
 .footer {
-  background-color: #374151; /* 濃いグレーの背景 */
-  color: #9ca3af;
+  background-color: #eaf9a7; /* 濃いグレーの背景 */
+  color: #1e1e1d;
   text-align: center;
   padding: 16px;
   font-size: 14px;
@@ -213,4 +213,22 @@ body {
   .todo-button {
     width: 100%; /* ボタンを横幅いっぱいにして押しやすく */
   }
+}
+/* リストの1行全体の設定（横に広げて両端に配置する） */
+.shop-item {
+ display: flex;
+ justify-content: space-between; /* これで名前とボタンを両端に離します */
+ align-items: center;            /* 縦の真ん中を揃えます */
+ padding: 8px 12px;              /* 少し上下左右に隙間を作って押しやすく */
+ border-bottom: 1px solid #eee;  /* 行と行の間にうっすら線を入れるとお洒落に！ */
+}
+/* 削除ボタン単体に少し左側の余白を持たせる保険 */
+.delete-button {
+ margin-left: 15px;
+}
+
+/* チェックが入った（visitedクラスがついた）お店の文字をグレーにして横線を引く */
+.shop-item.visited .shop-name {
+ color: #aaa;
+ text-decoration: line-through;
 }

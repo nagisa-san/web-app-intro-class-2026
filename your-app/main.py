@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field  # 受け取るデータの形をチェッ
 
 # --- FastAPIアプリ ---
 # このappが、Webアプリ全体の本体になる
-app = FastAPI(title="TODO App")
+app = FastAPI(title="行きたい店リスト App")
 
 # CORS設定: 別のアドレスで動くフロント（ブラウザの画面）からの通信を許可する
 # allow_origins=["*"] は「どこからのアクセスでもOK」という意味（学習用の設定）
