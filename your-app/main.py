@@ -35,10 +35,10 @@ def init_db():
     conn = sqlite3.connect(DATABASE)  
     cursor = conn.cursor()  
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS shops (
+        CREATE TABLE IF NOT EXISTS shops2 (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,                   
-        visited INTEGER DEFAULT 0             
+        visited INTEGER DEFAULT 0,comment TEXT            
         )
     """)
     conn.commit()  # 変更を確定して保存する
@@ -54,7 +54,7 @@ class ShopCreate(BaseModel):
     # 新しいお店を作るときに受け取るデータ
     # title は1文字以上100文字以下の文字列でなければならない
     name: str = Field(min_length=1, max_length=100)
-
+    comment: str = Field(default="",max_length=200)
 
 class ShopUpdate(BaseModel):
     # TODOを更新するときに受け取るデータ
@@ -74,14 +74,14 @@ def get_shops():
     cursor = conn.cursor()
 
     # todos テーブルの全データを id 順に取り出す
-    cursor.execute("SELECT id, name, visited FROM shops ORDER BY id")
+    cursor.execute("SELECT id, name, visited, comment FROM shops ORDER BY id")
     shops = cursor.fetchall()  # 取り出した全行をリストで受け取る
 
     conn.close()  # 接続を閉じる
     # 1行は (id, title, done) の順のタプルなので、番号で取り出す。
     # 取り出したデータを、ブラウザに返しやすい辞書のリストに作り変える。
     return [
-        {"id": shop[0], "name": shop[1], "visited": bool(shop[2])}
+        {"id": shop[0], "name": shop[1], "visited": bool(shop[2]),"comment": shop[3]}
         for shop in shops
     ]
 
@@ -95,14 +95,14 @@ def create_shop(shop: ShopCreate):
     # 新しいTODOを1件追加する（done は 0=未完了で登録）
     # ? を使うことで、危険な文字列が混ざってもSQLが壊れない（SQLインジェクション対策）
     cursor.execute(
-        "INSERT INTO shops (name, visited) VALUES (?, 0)",
-        (shop.name,),
+        "INSERT INTO shops (name, comment, visited) VALUES (?, ?, 0)",
+        (shop.name, shop.comment)
     )
     conn.commit()  # 追加を確定する
     shop_id = cursor.lastrowid  # たった今追加した行の id を取得する
 
     conn.close()
-    return {"id": shop_id, "name": shop.name, "visited": False}
+    return {"id": shop_id, "name": shop.name, "comment": shop.comment, "visited": False}
 
 
 # PUT /todos/5 のように、URLの {todo_id} の部分が引数 todo_id に入る
